@@ -1,0 +1,58 @@
+강사의 킥(Kick)
+과정명: LangChain으로 만드는 웹 기반 챗봇 실습
+교육대상: 국비직업훈련교‧강사
+목적: 교육 이후 현업에서 LangChain 기반 챗봇 구현 시 실무 적용을 돕기 위한 핵심 요약 및 활용 팁 제공
+________________________________________
+1. 핵심 개념 요약
+구분	주요 내용	실무 포인트
+LangChain 핵심 구조	LLM(언어모델) + Chain(연결 로직) + Memory(대화 상태) + Tool(외부 연동)	- 각 컴포넌트를 모듈화하면 유지보수 용이- Streamlit 등과 쉽게 통합 가능
+RAG (Retrieval-Augmented Generation)	외부 지식(문서, DB)을 검색하여 답변 품질 향상	- Vector Store 구축 시 Chroma / FAISS 추천- Embedding 품질이 답변 신뢰도를 좌우
+Streamlit 통합	웹 대화형 인터페이스 구현	- st.session_state로 대화이력 관리- st.chat_message 활용해 UI 향상
+Chain Type 선택	SimpleChain, SequentialChain, ConversationalChain 등	- 간단한 질의응답은 ConversationalRetrievalChain 추천
+________________________________________
+2. 실습 핵심 흐름
+① 데이터 준비 → ② 벡터화 → ③ Retriever 구축 → ④ LangChain 연결 → ⑤ Streamlit UI 구현
+# 간단한 챗봇 기본 구조 예시
+from langchain.llms import OpenAI
+from langchain.chains import ConversationChain
+import streamlit as st
+
+st.title("LangChain 기반 웹 챗봇")
+
+llm = OpenAI(temperature=0.7)
+conversation = ConversationChain(llm=llm)
+
+user_input = st.text_input("질문을 입력하세요:")
+if user_input:
+    response = conversation.run(user_input)
+    st.write(response)
+Tip:
+•	실무에서는 API Key를 .env 파일로 관리
+•	Streamlit 배포 시 streamlit run app.py --server.port 8501
+•	LCEL 문법이 권장되나 간단한 RAG 연동은 from langchain.chains import ConversationalRetrievalChain 등 사용
+________________________________________
+3. 실무 적용 & 확장 아이디어
+적용 분야	활용 예시	구현 팁
+교육기관	교과서, 강의자료 기반 질의응답 챗봇	문서 분할 시 RecursiveCharacterTextSplitter 활용
+기업 현장	매뉴얼/FAQ 챗봇	데이터 갱신 자동화를 위해 Vector DB + Scheduler 구조 추천
+취업지원센터	면접 대비 / 직업상담 챗봇	사용자의 입력 패턴을 Memory로 저장하여 개인화 응답 구현
+________________________________________
+4. 현장 활용 Kick 포인트
+1.	“LangChain은 파이프라인 구성 도구”
+→ LLM 호출 + 데이터 검색 + UI 표시의 연결 관계를 이해하면 실무 확장 가능
+2.	“작게 시작, 점진적 확장”
+→ RAG, Tool, Agent 기능은 필요할 때 단계적으로 추가
+3.	“Streamlit은 시각화와 피드백의 장”
+→ 실습결과를 즉시 확인하며 학습효과 극대화
+4.	“데이터 품질이 곧 답변 품질”
+→ Embedding 벡터 품질과 문서 전처리가 중요
+________________________________________
+5. 참고자료
+•	LangChain 공식 문서: https://python.langchain.com
+•	Streamlit Docs: https://docs.streamlit.io
+•	FAISS (Facebook AI Similarity Search): https://faiss.ai
+
+
+Langchain을 활용한 streamlit 기반 웹 챗봇 예시 코드를 함께 전달드립니다.
+1.	입력한 문서파일에 대해 질의응답을 수행하는 Rag 챗봇 : rag_chatbot.py
+2.	했던 말을 기억해서 지속적 대화가 가능한 챗봇 : memory.py
